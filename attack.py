@@ -1,21 +1,30 @@
 # attack.py
 
-from collections import Counter
 from cipher import decrypt, ALPHABET
+from collections import Counter
 
-# English letter frequency (approx)
+# English letter frequency ranking (approx)
 COMMON = "etaoinshrdlcumwfgypbvkjxqz"
 
+
+def score_english(text):
+    """Score text by counting common letters; higher = more likely correct."""
+    return sum(text.count(ch) for ch in COMMON[:6])  # e,t,a,o,i,n
+
+
 def crack(cipher_text):
-    # Count frequency in text
-    freq = Counter(ch for ch in cipher_text.lower() if ch in ALPHABET)
-    if not freq:
-        return None, ""
+    """Try all 26 keys and pick the best score."""
+    best_key = None
+    best_score = -1
+    best_plain = ""
 
-    # Most frequent character in the text
-    most_common_in_text = freq.most_common(1)[0][0]
+    for key in range(26):
+        candidate = decrypt(cipher_text, key)
+        score = score_english(candidate.lower())
 
-    # Assume frequent char corresponds to 'e'
-    assumed_key = (ALPHABET.index(most_common_in_text) - ALPHABET.index("e")) % 26
+        if score > best_score:
+            best_score = score
+            best_key = key
+            best_plain = candidate
 
-    return assumed_key, decrypt(cipher_text, assumed_key)
+    return best_key, best_plain
