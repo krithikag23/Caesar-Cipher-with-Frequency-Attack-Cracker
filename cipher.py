@@ -10,3 +10,6 @@ def encrypt(text, key):
         else:
             res += ch
     return res
+
+def decrypt(text, key):
+    return encrypt(text, -key)
