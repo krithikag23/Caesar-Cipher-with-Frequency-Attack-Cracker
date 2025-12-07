@@ -1,0 +1,3 @@
+# cipher.py
+
+ALPHABET = "abcdefghijklmnopqrstuvwxyz"
